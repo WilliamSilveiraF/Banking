@@ -56,7 +56,7 @@ class PaymentProcessor(Thread):
                 self.process_transaction(transaction)
             time.sleep(3 * time_unit)  # Remova esse sleep após implementar sua solução!
 
-        LOGGER.info(f"O PaymentProcessor {self._id} do banco {self._bank_id} foi finalizado.")
+        LOGGER.info(f"O PaymentProcessor {self._id} do banco {self.bank._id} foi finalizado.")
 
 
     def process_transaction(self, transaction: Transaction) -> TransactionStatus:

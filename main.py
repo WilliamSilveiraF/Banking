@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # Inicializa gerador de transações e processadores de pagamentos para os Bancos Nacionais:
     for i, bank in enumerate(banks):
         # Inicializa um TransactionGenerator thread por banco:
-        TransactionGenerator(_id=i, bank=bank).start()
+        TransactionGenerator(_id=i, bank=bank).start()  
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
         PaymentProcessor(_id=i, bank=bank).start()
