@@ -44,10 +44,8 @@ class TransactionGenerator(Thread):
 
         LOGGER.info(f"Inicializado TransactionGenerator para o Banco Nacional {self.bank._id}!")
 
-        operating = banks[self.bank._id].operating
-
         i = 0
-        while operating:
+        while banks[self.bank._id].operating:
             origin = (self.bank._id, self._id)
             destination_bank = randint(0, 5)
             destination = (destination_bank, randint(0, 100))

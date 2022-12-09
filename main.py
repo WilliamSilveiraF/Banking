@@ -62,9 +62,13 @@ if __name__ == "__main__":
         banks.append(bank)
 
     # Inicializa gerador de transações e processadores de pagamentos para os Bancos Nacionais:
+    transactions_threads = []
     for i, bank in enumerate(banks):
         # Inicializa um TransactionGenerator thread por banco:
-        TransactionGenerator(_id=i, bank=bank).start()  
+        transaction_thread = TransactionGenerator(_id=i, bank=bank)
+        transactions_threads.append(TransactionGenerator(_id=i, bank=bank))
+        transaction_thread.start()
+
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
         PaymentProcessor(_id=i, bank=bank).start()
@@ -78,8 +82,15 @@ if __name__ == "__main__":
         # Atualiza a variável tempo considerando o intervalo de criação dos clientes:
         t += dt
 
+    
     # Finaliza todas as threads
-    # TODO
-
+    for bank in banks:
+        bank.operating = False
+    
+    for transaction in transactions_threads:
+        try:
+            transaction.join()
+        except Exception: # prevent already deleted theread 
+            pass
     # Termina simulação. Após esse print somente dados devem ser printados no console.
     LOGGER.info(f"A simulação chegou ao fim!\n")
