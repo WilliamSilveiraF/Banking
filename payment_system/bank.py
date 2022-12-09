@@ -4,7 +4,7 @@ from payment_system.account import Account, CurrencyReserves
 from utils.transaction import Transaction
 from utils.currency import Currency
 from utils.logger import LOGGER
-
+from threading import Lock
 
 class Bank():
     """
@@ -49,6 +49,8 @@ class Bank():
 
         self.national_transaction = 0
         self.international_transaction = 0
+        self.transaction_interval       = { 'transactions_amt': 0, 'total_time': 0 }
+        self.transaction_interval_lock  = Lock()
 
 
     def new_account(self, balance: int = 0, overdraft_limit: int = 0) -> None:
