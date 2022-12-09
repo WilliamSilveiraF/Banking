@@ -68,6 +68,7 @@ if __name__ == "__main__":
         transaction_thread = TransactionGenerator(_id=i, bank=bank)
         transactions_threads.append(TransactionGenerator(_id=i, bank=bank))
         transaction_thread.start()
+
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
         PaymentProcessor(_id=i, bank=bank).start()

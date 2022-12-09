@@ -47,6 +47,9 @@ class Bank():
         self.accounts           = []
         self.transaction_queue  = []
 
+        self.national_transaction = 0
+        self.international_transaction = 0
+
 
     def new_account(self, balance: int = 0, overdraft_limit: int = 0) -> None:
         """
@@ -77,4 +80,24 @@ class Bank():
         # TODO: IMPLEMENTE AS MODIFICAÇÕES, SE NECESSÁRIAS, NESTE MÉTODO!
 
         LOGGER.info(f"Estatísticas do Banco Nacional {self._id}:")
-        LOGGER.info(f"...")
+        LOGGER.info(f"Saldo do Banco das seguintes moedas: ")
+        LOGGER.info(f"USD -> {self.reserves.USD.balance}")
+        LOGGER.info(f"EUR -> {self.reserves.EUR.balance}")
+        LOGGER.info(f"GBP -> {self.reserves.GBP.balance}")
+        LOGGER.info(f"JPY -> {self.reserves.JPY.balance}")
+        LOGGER.info(f"CHF -> {self.reserves.CHF.balance}")
+        LOGGER.info(f"BRL -> {self.reserves.BRL.balance}")
+
+        LOGGER.info(f"Número de transferências nacionais -> {self.national_transaction}")
+        LOGGER.info(f"Número de transferências nacionais -> {self.international_transaction}")
+
+        LOGGER.info(f"Número de de contas bancárias registradas no banco -> {len(self.accounts)}")
+
+        total = 0
+
+        for account in self.accounts:
+            total += account.balance
+
+        LOGGER.info(f"Saldo total de todas as contas bancárias (dos clientes) registradas no banco -> {total}")
+
+        # Falta colocar o lucro do banco
