@@ -8,6 +8,7 @@ from payment_system.payment_processor import PaymentProcessor
 from payment_system.transaction_generator import TransactionGenerator
 from utils.currency import Currency
 from utils.logger import CH, LOGGER
+from datetime import datetime
 
 
 if __name__ == "__main__":
@@ -93,12 +94,19 @@ if __name__ == "__main__":
 
         transactions_threads[i].join()
         payment_processor_threads[i].join()
+    
+    finalization_time = datetime.now()
 
     total_waiting_transactions = 0
+    average_wait_transactions = 0
+
     for bank in banks:
         bank.info()
         total_waiting_transactions += len(bank.transaction_queue)
+        for transaction in bank.transaction_queue:
+            average_wait_transactions += (finalization_time - transaction.created_at).total_seconds()
 
     LOGGER.info(f"{total_waiting_transactions} transações ficaram em espera e não foram concluídas.")
+    LOGGER.info(f"A média de espera das transações na fila foi {average_wait_transactions/total_waiting_transactions:.0f} segundos.")
     # Termina simulação. Após esse print somente dados devem ser printados no console.
     LOGGER.info(f"A simulação chegou ao fim!\n")
