@@ -72,6 +72,7 @@ if __name__ == "__main__":
 
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
+
         payment_processor_threads.append(PaymentProcessor(_id=i, bank=bank))
 
         payment_processor_threads[-1].start()
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     # Finaliza todas as threads
     for i, bank in enumerate(banks):
         bank.operating = False
-
+        
         transactions_threads[i].join()
         payment_processor_threads[i].join()
 
@@ -100,5 +101,6 @@ if __name__ == "__main__":
         total_waiting_transactions += len(bank.transaction_queue)
 
     LOGGER.info(f"{total_waiting_transactions} transações ficaram em espera e não foram concluídas.")
+
     # Termina simulação. Após esse print somente dados devem ser printados no console.
     LOGGER.info(f"A simulação chegou ao fim!\n")

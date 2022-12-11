@@ -2,6 +2,7 @@ from payment_system.account import Account, CurrencyReserves
 from utils.transaction import Transaction
 from utils.currency import Currency
 from utils.logger import LOGGER
+
 from threading import Lock, Semaphore
 from random import randint
 
@@ -59,6 +60,8 @@ class Bank():
     
         self.national_transaction = 0
         self.international_transaction = 0
+        self.transaction_interval       = { 'transactions_amt': 0, 'total_time': 0 }
+        self.transaction_interval_lock  = Lock()
 
         self.national_transaction_lock = Lock()
         self.international_transaction_lock = Lock()
