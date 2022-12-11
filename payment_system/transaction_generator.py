@@ -52,6 +52,7 @@ class TransactionGenerator(Thread):
             amount = randint(100, 1000000)
             new_transaction = Transaction(i, origin, destination, amount, currency=Currency(destination_bank+1))
             banks[self.bank._id].transaction_queue.append(new_transaction)
+            banks[self.bank._id].semaphore_transaction_queue.release()
             i=+1
             time.sleep(0.2 * time_unit)
 

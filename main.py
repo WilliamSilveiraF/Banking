@@ -63,18 +63,21 @@ if __name__ == "__main__":
 
     # Inicializa gerador de transações e processadores de pagamentos para os Bancos Nacionais:
     transactions_threads = []
-    paymentprocessors_threads = []
+    payment_processor_threads = []
+
     for i, bank in enumerate(banks):
         # Inicializa um TransactionGenerator thread por banco:
-        transaction_thread = TransactionGenerator(_id=i, bank=bank)
         transactions_threads.append(TransactionGenerator(_id=i, bank=bank))
-        transaction_thread.start()
+        
 
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
-        paymentprocessor_thread = PaymentProcessor(_id=i, bank=bank)
-        paymentprocessors_threads.append(paymentprocessor_thread)
-        paymentprocessor_thread.start()
+
+        payment_processor_threads.append(PaymentProcessor(_id=i, bank=bank))
+
+        payment_processor_threads[-1].start()
+        transactions_threads[-1].start()
+        
     # Enquanto o tempo total de simuação não for atingido:
     while t < total_time:
         # Aguarda um tempo aleatório antes de criar o próximo cliente:
@@ -86,27 +89,18 @@ if __name__ == "__main__":
 
     
     # Finaliza todas as threads
-    for bank in banks:
+    for i, bank in enumerate(banks):
         bank.operating = False
-    
-    for transaction in transactions_threads:
-        try:
-            transaction.join()
-        except Exception: # prevent already deleted theread 
-            pass
-    for paymentprocessor in paymentprocessors_threads:
-        try:
-            paymentprocessor.join()
-        except Exception:
-            pass
-
-    for bank in banks: 
-        LOGGER.info(f"---------- Banco {bank._id} ----------")
-        LOGGER.info(f"")
-        LOGGER.info(f"Quantidade de Transações não processadas: {len(bank.transaction_queue)}")
-        LOGGER.info(f"Média de tempo de fila de espera do banco: {bank.transaction_interval['total_time'] / bank.transaction_interval['transactions_amt']}s")
-        LOGGER.info(f"")
-        LOGGER.info(f"--------------------------------------")
         
+        transactions_threads[i].join()
+        payment_processor_threads[i].join()
+
+    total_waiting_transactions = 0
+    for bank in banks:
+        bank.info()
+        total_waiting_transactions += len(bank.transaction_queue)
+
+    LOGGER.info(f"{total_waiting_transactions} transações ficaram em espera e não foram concluídas.")
+
     # Termina simulação. Após esse print somente dados devem ser printados no console.
     LOGGER.info(f"A simulação chegou ao fim!\n")
