@@ -63,15 +63,19 @@ if __name__ == "__main__":
 
     # Inicializa gerador de transações e processadores de pagamentos para os Bancos Nacionais:
     transactions_threads = []
+    payment_processor_threads = []
+
     for i, bank in enumerate(banks):
         # Inicializa um TransactionGenerator thread por banco:
-        transaction_thread = TransactionGenerator(_id=i, bank=bank)
         transactions_threads.append(TransactionGenerator(_id=i, bank=bank))
-        transaction_thread.start()
+        
 
         # Inicializa um PaymentProcessor thread por banco.
         # Sua solução completa deverá funcionar corretamente com múltiplos PaymentProcessor threads para cada banco.
-        PaymentProcessor(_id=i, bank=bank).start()
+        payment_processor_threads.append(PaymentProcessor(_id=i, bank=bank))
+
+        payment_processor_threads[-1].start()
+        transactions_threads[-1].start()
         
     # Enquanto o tempo total de simuação não for atingido:
     while t < total_time:
@@ -84,13 +88,17 @@ if __name__ == "__main__":
 
     
     # Finaliza todas as threads
-    for bank in banks:
+    for i, bank in enumerate(banks):
         bank.operating = False
-    
-    for transaction in transactions_threads:
-        try:
-            transaction.join()
-        except Exception: # prevent already deleted theread 
-            pass
+
+        transactions_threads[i].join()
+        payment_processor_threads[i].join()
+
+    total_waiting_transactions = 0
+    for bank in banks:
+        bank.info()
+        total_waiting_transactions += len(bank.transaction_queue)
+
+    LOGGER.info(f"{total_waiting_transactions} transações ficaram em espera e não foram concluídas.")
     # Termina simulação. Após esse print somente dados devem ser printados no console.
     LOGGER.info(f"A simulação chegou ao fim!\n")
