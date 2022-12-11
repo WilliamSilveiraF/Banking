@@ -149,4 +149,9 @@ class PaymentProcessor(Thread):
         time.sleep(3 * time_unit)
 
         transaction.set_status(TransactionStatus.SUCCESSFUL)
+
+        self.bank.transaction_interval_lock.acquire()
+        self.bank.transaction_interval['transactions_amt'] += 1
+        self.bank.transaction_interval['total_time'] += transaction.get_processing_time().total_seconds()
+        self.bank.transaction_interval_lock.release()
         return transaction.status
