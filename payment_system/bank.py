@@ -32,6 +32,18 @@ class Bank():
         Quantidade de transações nacionais
     international_transaction: int
         Quantidade de transações internationais
+    bank_taxes: int
+        Quantidade de taxa por transferência internacional que o banco ganhou
+    overdraft_taxes: int
+        Quantidade de juros que o banco ganhou pelos clientes usarem o cheque especial
+
+    Locks:
+    - national_transaction_lock
+    - international_transaction_lock
+    - taxes_lock
+
+    Semaphores:
+    - semaphore_transaction_queue
 
     Métodos
     -------
@@ -117,5 +129,3 @@ class Bank():
 
         LOGGER.info(f"Saldo total de todas as contas bancárias (dos clientes) registradas no banco -> {total:.2f}")
         LOGGER.info(f"Lucro do banco: {self.currency} {self.bank_taxes + self.overdraft_taxes:.2f}\n\n")
-
-        # Falta colocar o lucro do banco
